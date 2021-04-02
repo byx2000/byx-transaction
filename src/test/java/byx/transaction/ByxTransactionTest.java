@@ -2,10 +2,26 @@ package byx.transaction;
 
 import byx.transaction.annotation.Transactional;
 import byx.util.jdbc.JdbcUtils;
+import com.alibaba.druid.pool.DruidDataSource;
 import org.junit.jupiter.api.Test;
+
+import javax.sql.DataSource;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ByxTransactionTest {
+    private static final JdbcUtils jdbcUtils = new JdbcUtils(getDataSource());
+
+    private static DataSource getDataSource() {
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setDriverClassName("org.sqlite.JDBC");
+        dataSource.setUrl("jdbc:sqlite::resource:test.db");
+        dataSource.setUsername("");
+        dataSource.setPassword("");
+        dataSource.setTestWhileIdle(false);
+        return dataSource;
+    }
+
     public interface UserDao {
         void dao1();
         void dao2();
@@ -16,22 +32,22 @@ public class ByxTransactionTest {
     public static class UserDaoImpl implements UserDao {
         @Override
         public void dao1() {
-            JdbcUtils.update("update A set value = value - 10");
+            jdbcUtils.update("update A set value = value - 10");
         }
 
         @Override
         public void dao2() {
-            JdbcUtils.update("update A set value = value + 10");
+            jdbcUtils.update("update A set value = value + 10");
         }
 
         @Override
         public void dao3() {
-            JdbcUtils.update("update B set value = value - 10");
+            jdbcUtils.update("update B set value = value - 10");
         }
 
         @Override
         public void dao4() {
-            JdbcUtils.update("update B set value = value + 10");
+            jdbcUtils.update("update B set value = value + 10");
         }
     }
 
@@ -80,29 +96,29 @@ public class ByxTransactionTest {
 
     @Test
     public void test() {
-        assertEquals(100, JdbcUtils.querySingleValue("select value from A", Integer.class));
-        assertEquals(0, JdbcUtils.querySingleValue("select value from B", Integer.class));
+        assertEquals(100, jdbcUtils.querySingleValue("select value from A", Integer.class));
+        assertEquals(0, jdbcUtils.querySingleValue("select value from B", Integer.class));
 
-        UserService userService = ByxTransaction.getProxy(new UserServiceImpl());
+        UserService userService = ByxTransaction.getProxy(jdbcUtils, new UserServiceImpl());
 
         assertNull(userService.service1());
-        assertEquals(100, JdbcUtils.querySingleValue("select value from A", Integer.class));
-        assertEquals(0, JdbcUtils.querySingleValue("select value from B", Integer.class));
+        assertEquals(100, jdbcUtils.querySingleValue("select value from A", Integer.class));
+        assertEquals(0, jdbcUtils.querySingleValue("select value from B", Integer.class));
 
         assertEquals(456, userService.service2());
-        assertEquals(90, JdbcUtils.querySingleValue("select value from A", Integer.class));
-        assertEquals(10, JdbcUtils.querySingleValue("select value from B", Integer.class));
+        assertEquals(90, jdbcUtils.querySingleValue("select value from A", Integer.class));
+        assertEquals(10, jdbcUtils.querySingleValue("select value from B", Integer.class));
 
         assertThrows(RuntimeException.class, userService::service3);
-        assertEquals(100, JdbcUtils.querySingleValue("select value from A", Integer.class));
-        assertEquals(10, JdbcUtils.querySingleValue("select value from B", Integer.class));
+        assertEquals(100, jdbcUtils.querySingleValue("select value from A", Integer.class));
+        assertEquals(10, jdbcUtils.querySingleValue("select value from B", Integer.class));
 
         userService.service4();
-        assertEquals(100, JdbcUtils.querySingleValue("select value from A", Integer.class));
-        assertEquals(10, JdbcUtils.querySingleValue("select value from B", Integer.class));
+        assertEquals(100, jdbcUtils.querySingleValue("select value from A", Integer.class));
+        assertEquals(10, jdbcUtils.querySingleValue("select value from B", Integer.class));
 
-        JdbcUtils.update("update B set value = value - 10");
-        assertEquals(100, JdbcUtils.querySingleValue("select value from A", Integer.class));
-        assertEquals(0, JdbcUtils.querySingleValue("select value from B", Integer.class));
+        jdbcUtils.update("update B set value = value - 10");
+        assertEquals(100, jdbcUtils.querySingleValue("select value from A", Integer.class));
+        assertEquals(0, jdbcUtils.querySingleValue("select value from B", Integer.class));
     }
 }

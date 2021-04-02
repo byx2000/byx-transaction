@@ -2,6 +2,7 @@ package byx.transaction;
 
 import byx.transaction.annotation.Transactional;
 import byx.transaction.core.TransactionInterceptor;
+import byx.util.jdbc.JdbcUtils;
 import byx.util.proxy.ProxyUtils;
 import static byx.util.proxy.core.MethodMatcher.*;
 
@@ -15,8 +16,8 @@ public class ByxTransaction {
      * 创建事务增强代理类
      * @param target 目标类
      */
-    public static <T> T getProxy(T target) {
+    public static <T> T getProxy(JdbcUtils jdbcUtils, T target) {
         return ProxyUtils.proxy(target,
-                new TransactionInterceptor().when(hasAnnotation(Transactional.class)));
+                new TransactionInterceptor(jdbcUtils).when(hasAnnotation(Transactional.class)));
     }
 }

@@ -10,15 +10,21 @@ import byx.util.proxy.core.TargetMethod;
  * @author byx
  */
 public class TransactionInterceptor implements MethodInterceptor {
+    private final JdbcUtils jdbcUtils;
+
+    public TransactionInterceptor(JdbcUtils jdbcUtils) {
+        this.jdbcUtils = jdbcUtils;
+    }
+
     @Override
     public Object intercept(TargetMethod targetMethod) {
         try {
-            JdbcUtils.startTransaction();
+            jdbcUtils.startTransaction();
             Object ret = targetMethod.invokeWithOriginalParams();
-            JdbcUtils.commit();
+            jdbcUtils.commit();
             return ret;
         } catch (Exception e) {
-            JdbcUtils.rollback();
+            jdbcUtils.rollback();
             return null;
         }
     }
