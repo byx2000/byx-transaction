@@ -9,7 +9,7 @@ import javax.sql.DataSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ByxTransactionTest {
+public class TransactionManagerTest {
     private static final JdbcUtils jdbcUtils = new JdbcUtils(getDataSource());
 
     private static DataSource getDataSource() {
@@ -99,7 +99,7 @@ public class ByxTransactionTest {
         assertEquals(100, jdbcUtils.querySingleValue("select value from A", Integer.class));
         assertEquals(0, jdbcUtils.querySingleValue("select value from B", Integer.class));
 
-        UserService userService = ByxTransaction.getProxy(jdbcUtils, new UserServiceImpl());
+        UserService userService = TransactionManager.getProxy(jdbcUtils, new UserServiceImpl());
 
         assertNull(userService.service1());
         assertEquals(100, jdbcUtils.querySingleValue("select value from A", Integer.class));

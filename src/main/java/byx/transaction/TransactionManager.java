@@ -7,11 +7,11 @@ import byx.util.proxy.ProxyUtils;
 import static byx.util.proxy.core.MethodMatcher.*;
 
 /**
- * 事务增强工具类
+ * 事务管理器
  *
  * @author byx
  */
-public class ByxTransaction {
+public class TransactionManager {
     /**
      * 创建事务增强代理类
      * @param target 目标类
