@@ -1,6 +1,6 @@
 # ByxTransaction
 
-ByxTransaction是一个模仿Spring事务管理的声明式事务框架，实现了Spring中的`Transactional`声明式事务注解的使用方式。
+ByxTransaction是一个模仿Spring事务管理的声明式事务框架，实现了Spring中的`Transactional`声明式事务注解的使用方式，支持`PROPAGATION_REQUIRED`和`PROPAGATION_SUPPORTS`两种事务传播行为。
 
 ## Maven引入
 
@@ -161,3 +161,20 @@ public void transfer(Integer outId, Integer inId, Integer amount) {
 |2|0|
 
 可以发现，数据库中的数据并没有变化，这说明事务已成功回滚。
+
+## 事务传播行为
+
+ByxTransaction支持两种事务传播行为：
+
+* `PROPAGATION_REQUIRED`：如果当前已存在事务，则直接使用当前事务，否则新开一个事务
+* `PROPAGATION_SUPPORTS`：如果当前已存在事务，则直接使用当前事务，否则不使用事务
+
+标注`@Transactional`注解时通过设置`propagationBehavior`属性来指定事务传播行为。
+
+```java
+// 指定PROPAGATION_REQUIRED传播行为
+@Transactional(propagation = Propagation.PROPAGATION_REQUIRED)
+
+// 指定PROPAGATION_SUPPORTS传播行为
+@Transactional(propagation = Propagation.PROPAGATION_SUPPORTS)
+```

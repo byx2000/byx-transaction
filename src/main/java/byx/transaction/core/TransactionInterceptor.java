@@ -20,7 +20,7 @@ public class TransactionInterceptor implements MethodInterceptor {
     @Override
     public Object intercept(TargetMethod targetMethod) {
         Transactional transactional = targetMethod.getSignature().getAnnotation(Transactional.class);
-        PropagationBehavior behavior = transactional.propagationBehavior();
+        Propagation behavior = transactional.propagation();
         return switch (behavior) {
             case PROPAGATION_REQUIRED -> interceptPropagationRequired(targetMethod);
             case PROPAGATION_SUPPORTS -> interceptPropagationSupports(targetMethod);

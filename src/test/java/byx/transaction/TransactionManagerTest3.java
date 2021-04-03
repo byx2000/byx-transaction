@@ -1,7 +1,7 @@
-import byx.transaction.BaseTest;
-import byx.transaction.TransactionManager;
+package byx.transaction;
+
 import byx.transaction.annotation.Transactional;
-import byx.transaction.core.PropagationBehavior;
+import byx.transaction.core.Propagation;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,7 +13,7 @@ public class TransactionManagerTest3 extends BaseTest {
             service2(raiseException);
         }
 
-        @Transactional(propagationBehavior = PropagationBehavior.PROPAGATION_SUPPORTS)
+        @Transactional(propagation = Propagation.PROPAGATION_SUPPORTS)
         public void service2(boolean raiseException) {
             jdbcUtils.update("update A set value = value - 10");
             if (raiseException) {

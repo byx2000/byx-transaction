@@ -1,6 +1,6 @@
 package byx.transaction.annotation;
 
-import byx.transaction.core.PropagationBehavior;
+import byx.transaction.core.Propagation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -18,5 +18,5 @@ public @interface Transactional {
     /**
      * 事务传播行为
      */
-    PropagationBehavior propagationBehavior() default PropagationBehavior.PROPAGATION_REQUIRED;
+    Propagation propagation() default Propagation.PROPAGATION_REQUIRED;
 }
