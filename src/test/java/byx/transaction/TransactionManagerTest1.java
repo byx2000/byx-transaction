@@ -1,27 +1,11 @@
 package byx.transaction;
 
 import byx.transaction.annotation.Transactional;
-import byx.util.jdbc.JdbcUtils;
-import com.alibaba.druid.pool.DruidDataSource;
 import org.junit.jupiter.api.Test;
-
-import javax.sql.DataSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TransactionManagerTest {
-    private static final JdbcUtils jdbcUtils = new JdbcUtils(getDataSource());
-
-    private static DataSource getDataSource() {
-        DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setDriverClassName("org.sqlite.JDBC");
-        dataSource.setUrl("jdbc:sqlite::resource:test.db");
-        dataSource.setUsername("");
-        dataSource.setPassword("");
-        dataSource.setTestWhileIdle(false);
-        return dataSource;
-    }
-
+public class TransactionManagerTest1 extends BaseTest {
     public interface UserDao {
         void dao1();
         void dao2();

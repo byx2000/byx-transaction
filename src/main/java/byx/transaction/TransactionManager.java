@@ -14,6 +14,7 @@ import static byx.util.proxy.core.MethodMatcher.*;
 public class TransactionManager {
     /**
      * 创建事务增强代理类
+     * @param jdbcUtils JDBC工具类实例
      * @param target 目标类
      */
     public static <T> T getProxy(JdbcUtils jdbcUtils, T target) {
