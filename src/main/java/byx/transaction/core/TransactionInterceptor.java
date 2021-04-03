@@ -1,5 +1,6 @@
 package byx.transaction.core;
 
+import byx.transaction.annotation.Transactional;
 import byx.util.jdbc.JdbcUtils;
 import byx.util.proxy.core.MethodInterceptor;
 import byx.util.proxy.core.TargetMethod;
@@ -18,9 +19,20 @@ public class TransactionInterceptor implements MethodInterceptor {
 
     @Override
     public Object intercept(TargetMethod targetMethod) {
-        // PROPAGATION_REQUIRED传播特性
-        // 如果当前在事务中，则直接使用当前事务
-        // 否则新开一个事务
+        Transactional transactional = targetMethod.getSignature().getAnnotation(Transactional.class);
+        PropagationBehavior behavior = transactional.propagationBehavior();
+        return switch (behavior) {
+            case PROPAGATION_REQUIRED -> interceptPropagationRequired(targetMethod);
+            case PROPAGATION_SUPPORTS -> interceptPropagationSupports(targetMethod);
+        };
+    }
+
+    /**
+     * PROPAGATION_REQUIRED传播特性
+     * 如果当前在事务中，则直接使用当前事务
+     * 否则新开一个事务
+     */
+    private Object interceptPropagationRequired(TargetMethod targetMethod) {
         if (jdbcUtils.inTransaction()) {
             return targetMethod.invokeWithOriginalParams();
         } else {
@@ -34,5 +46,14 @@ public class TransactionInterceptor implements MethodInterceptor {
                 return null;
             }
         }
+    }
+
+    /**
+     * PROPAGATION_SUPPORTS传播特性
+     * 如果当前在事务中，则直接使用当前事务
+     * 否则不使用事务
+     */
+    private Object interceptPropagationSupports(TargetMethod targetMethod) {
+        return targetMethod.invokeWithOriginalParams();
     }
 }

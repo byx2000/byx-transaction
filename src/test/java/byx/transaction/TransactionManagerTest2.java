@@ -1,6 +1,7 @@
 package byx.transaction;
 
 import byx.transaction.annotation.Transactional;
+import byx.transaction.core.PropagationBehavior;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,7 +37,7 @@ public class TransactionManagerTest2 extends BaseTest {
             int a = 1 / 0;
         }
 
-        @Transactional
+        @Transactional(propagationBehavior = PropagationBehavior.PROPAGATION_REQUIRED)
         public void service6() {
             jdbcUtils.update("update B set value = value + 10");
         }
